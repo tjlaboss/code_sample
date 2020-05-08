@@ -2,7 +2,7 @@
 #
 # Source: NNDC.BNL.gov/nudat2
 
-from scipy import log
+from numpy import log
 
 LN2 = log(2)
 MINUTE = 60

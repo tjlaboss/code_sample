@@ -1,7 +1,7 @@
 # Fuel
 
 
-import scipy
+import numpy as np
 from scipy.optimize import fsolve
 from scipy.constants import eV
 from .nuclides.half_lives import DAY
@@ -14,7 +14,7 @@ ELEMENTS = ("U", "Pu", "Uranium", "Plutonium")
 def give_me_fuel(element, enrichment, num_nuclides):
 	assert element in ELEMENTS, "Implemented fuel types: {}".format(ELEMENTS)
 	assert num_nuclides >= 2, "You cannot have fewer than 2 nuclides."
-	fuel_nuclides = scipy.zeros(num_nuclides)
+	fuel_nuclides = np.zeros(num_nuclides)
 	if element[0] == "U":
 		at235 = wt_to_at_uranium(enrichment)
 		at238 = 1 - at235
@@ -61,7 +61,7 @@ def wt_to_at_plutonium(wt239):
 def at_to_wt_arbitrary(list_of_nuclides, list_of_ats):
 	num = len(list_of_ats)
 	total_at = sum(list_of_ats)
-	list_of_wts = scipy.zeros(num)
+	list_of_wts = np.zeros(num)
 	for i, (nuc, at) in enumerate(zip(list_of_nuclides, list_of_ats)):
 		list_of_wts[i] = nuc.a*at/total_at
 	list_of_wts /= list_of_wts.sum()

@@ -4,7 +4,7 @@
 # Questions 1-4
 
 import depletr
-import scipy as sp
+import numpy as np
 
 
 SPECTRUM = "fast"
@@ -12,14 +12,14 @@ AVERAGE_KINF = {"thermal": 1.3169320996513936,
 				"fast"   : 0.9892984136969714}
 ELEMENTS = ("Pu", "Am", "Cm")
 # found with quicksolve.py
-MOX_AT = sp.array([0, 0.03182388222963699, 0.03319650338671934, 0.03356631994343097])
+MOX_AT = np.array([0, 0.03182388222963699, 0.03319650338671934, 0.03356631994343097])
 DESCRIPTOR = ("Fresh      ", "Once-Burnt ", "Twice-Burnt", "Thrice-Burnt")
 NSTEPS = 100
 
 study = depletr.Depleter(power=35, enrichment=5, max_burnup=50, spectrum=SPECTRUM)
 all_nuclides = study.get_all_nuclides()
 num_nuclides = len(all_nuclides)
-cycle_wts = sp.zeros((num_nuclides + 2, len(MOX_AT)))
+cycle_wts = np.zeros((num_nuclides + 2, len(MOX_AT)))
 
 cout = None
 for i, mox_frac in enumerate(MOX_AT):
@@ -42,6 +42,6 @@ for desc in DESCRIPTOR:
 	print(desc, end=" "*2)
 print()
 for j, nuc in enumerate(all_nuclides):
-	cycstr = sp.array2string(cycle_wts[j], formatter=fmt_dict, separator="  ")
+	cycstr = np.array2string(cycle_wts[j], formatter=fmt_dict, separator="  ")
 	nucstr = str(nuc)
 	print(nucstr + " "*(32-len(nucstr)) + cycstr)

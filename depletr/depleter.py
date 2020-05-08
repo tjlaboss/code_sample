@@ -3,7 +3,7 @@
 # Class to deplete nuclides
 
 import matplotlib.pyplot as plt
-import scipy as sp
+import numpy as np
 from scipy.linalg import expm as matrexp
 from scipy.constants import N_A
 from . import fuel, nuclides
@@ -44,10 +44,10 @@ class Depleter:
 	def _deplete(self, nsteps, dt, ds, c0, fission_rate, verbose):
 		m = ds.m
 		l = ds.l
-		kinfvals = sp.zeros(nsteps)
-		fluxvals = sp.zeros(nsteps)
-		enrichvals = sp.zeros(nsteps)
-		concentrations = sp.zeros((ds.size, nsteps))
+		kinfvals = np.zeros(nsteps)
+		fluxvals = np.zeros(nsteps)
+		enrichvals = np.zeros(nsteps)
+		concentrations = np.zeros((ds.size, nsteps))
 		enrichvals[0] = self.enrichment
 		
 		concentrations[:, 0] = c0
@@ -95,7 +95,7 @@ class Depleter:
 		concs, kinf, flux, enrich = self._deplete(nsteps, dt, ds, c0, fission_rate, verbose)
 		
 		if plots:
-			tvals = sp.arange(0, nsteps*dt, dt)
+			tvals = np.arange(0, nsteps*dt, dt)
 			if plots == 1:
 				fig = plt.figure()
 				axa = fig.add_subplot(221)
@@ -156,7 +156,7 @@ class Depleter:
 		mox[indices["U235"]] *= (1 - mox_frac)
 		mox[indices["U238"]] *= (1 - mox_frac)
 		# New array with only the relevant nuclides.
-		qnew = sp.zeros(quantities.shape)
+		qnew = np.zeros(quantities.shape)
 		for nuc in all_nuclides:
 			if nuc.element in which_elements:
 				index = indices[nuc.name]
@@ -202,9 +202,9 @@ class Depleter:
 		# Deplete over the intervals of interest with nsteps each
 		nt = len(times)
 		nc = len(c0)
-		results = sp.zeros((nc, nt + 1))
+		results = np.zeros((nc, nt + 1))
 		results[:, 0] = c0
-		concentrations = sp.zeros((nc, nt*nsteps + 1))
+		concentrations = np.zeros((nc, nt*nsteps + 1))
 		concentrations[:, 0] = c0
 		elapsed = 0
 		i = 0

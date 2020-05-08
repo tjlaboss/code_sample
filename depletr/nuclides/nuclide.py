@@ -1,4 +1,4 @@
-import scipy
+import numpy as np
 from . import elements
 from . import constants
 
@@ -34,7 +34,7 @@ class Nuclide:
 		if a == 1:
 			self._xi = 1
 		else:
-			self._xi = 1 + (self.alpha*scipy.log(self.alpha))/(1 - self.alpha)
+			self._xi = 1 + (self.alpha*np.log(self.alpha))/(1 - self.alpha)
 		self.metastable_branch_ratio = 0
 		# Cross sections
 		self.sigma_n = 0  # scatter
@@ -83,11 +83,11 @@ class Nuclide:
 	
 	@property
 	def halflife(self):
-		return scipy.log(2)/self._lambda_total
+		return np.log(2)/self._lambda_total
 	
 	@halflife.setter
 	def halflife(self, t12):
-		self._lambda_total = scipy.log(2)/t12
+		self._lambda_total = np.log(2)/t12
 
 	def capture(self):
 		"""Get the daughter nuclides from a neutron capture"""

@@ -1,7 +1,7 @@
 # Data Set
 
 from collections import OrderedDict
-import scipy as sp
+import numpy as sp
 from . import nuclides
 
 
