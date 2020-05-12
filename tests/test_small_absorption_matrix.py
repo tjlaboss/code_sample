@@ -4,7 +4,11 @@
 from assert_test import assert_test as _assert
 import sys; sys.path.append('..')
 import depletr
-from depletr.nuclides.thermal import u238, u239
+
+# Collect the nuclides we need
+thermal = depletr.nuclides.SPECTRA["thermal"]()
+u238 = thermal.u238
+u239 = thermal.u239
 
 
 def _get_m_matrix():

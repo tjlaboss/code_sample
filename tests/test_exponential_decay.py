@@ -6,9 +6,18 @@ import numpy as np
 from scipy.linalg import expm
 import sys; sys.path.append('..')
 import depletr
-from depletr.nuclides.thermal import u235, u238, u239, np239, pu238, pu239, pu242
 
-_ND = 4  # Number of decimal places to round matrix exponential calcs to
+# Number of decimal places to round matrix exponential calcs to
+_ND = 4
+# Collect the nuclides we need
+thermal = depletr.nuclides.SPECTRA["thermal"]()
+u235 = thermal.u235
+u238 = thermal.u238
+u239 = thermal.u239
+np239 = thermal.np239
+pu238 = thermal.pu238
+pu239 = thermal.pu239
+pu242 = thermal.pu242
 
 
 def test_half_life():
