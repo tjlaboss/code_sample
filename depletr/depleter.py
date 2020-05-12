@@ -10,9 +10,6 @@ from . import fuel, nuclides
 from . import plotter
 from .dataset import DataSet
 
-SPECTRA = {"fast"   : nuclides.fast,
-           "thermal": nuclides.thermal}
-
 
 class Depleter:
 	"""Depletion solver for the depletr module
@@ -43,16 +40,19 @@ class Depleter:
 	data: nuclides.Nuclib
 		Libary (either "fast" or "thermal") with nuclides defined
 	"""
-	def __init__(self, power, enrichment, max_burnup, spectrum,
-		         mass=1E8, fuel_type="U"):
+	def __init__(self, power, enrichment, max_burnup, spectrum, mass=1E8, fuel_type="U"):
 		self.power = power
 		self.enrichment = enrichment / 100
 		self.max_burnup = max_burnup
 		self.mass = mass
 		self.fuel_type = fuel_type
-		assert spectrum in SPECTRA, \
-			"Spectrum must be one of: {}".format(tuple(SPECTRA.keys()))
-		self.data = SPECTRA[spectrum]
+		try:
+			get_data = nuclides.SPECTRA[spectrum]
+		except KeyError:
+			errfmt = "Spectrum must be one of: {}"
+			key_tuple = tuple(nuclides.SPECTRA.keys())
+			raise ValueError(errfmt.format(key_tuple))
+		self.data = get_data()
 		self._scalar = mass*N_A/238*1E-24
 		self._last_dataset = None
 	
@@ -226,7 +226,7 @@ class Depleter:
 				b.set_title("$[L]$\n")
 				# Figure 2: Actinide % of Initial Heavy Metal plot
 				plt.figure()
-				plotter.make_heavy_metal_plot(tvals, concs, self.data.ALL_NUCLIDES, ax=None,
+				plotter.make_heavy_metal_plot(tvals, concs, all_nuclides, ax=None,
 				                              deadend_actinides=True, fission_products=True,
 				                              unit=(self.mass/self.power, "Burnup (MW-d/kg-HM)"))
 				return concs[:, -1]
@@ -236,7 +236,7 @@ class Depleter:
 				axk = plt.figure().add_subplot(111)
 				axu = plt.figure().add_subplot(111)
 			# Top left: Actinide depletion
-			plotter.make_actinides_plot(tvals, concs, self.data.ALL_NUCLIDES, axa,
+			plotter.make_actinides_plot(tvals, concs, all_nuclides, axa,
 			                            fission_products=True, deadend_actinides=True)
 			# Top Right: Enrichment and flux
 			plotter.make_enrichment_flux_plot(tvals, enrich, flux, axf)
@@ -405,7 +405,7 @@ class Depleter:
 			at time 0 and each time requested in `times`.
 		"""
 		ds = DataSet()
-		ds.add_nuclides(self.data.ALL_NUCLIDES, quantities[:-2])
+		ds.add_nuclides(self.get_all_nuclides(), quantities[:-2])
 		ds.build()
 		# Ignore (lumped) fission products
 		l = ds.l[:-1, :-1].copy()
