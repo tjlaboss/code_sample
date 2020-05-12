@@ -1,9 +1,13 @@
 # Thermal Spectrum (PWR)
 
 from .nuclide import Nuclide
+from .nuclib import Nuclib
 from .half_lives import *
 
-NU = 2.5
+
+# Nuclide library to populate
+thermal = Nuclib("thermal", nu=2.5)
+# List to populate it with
 ALL_NUCLIDES = []
 
 # Uranium
@@ -89,15 +93,18 @@ cm245.sigma_f = 116
 cm245.sigma_y = 17
 ALL_NUCLIDES.append(cm245)
 
-for _nuclide in ALL_NUCLIDES:
-	_n = _nuclide.name
-	if _n in ALPHA:
-		_nuclide.lambda_alpha = LN2/ALPHA[_n]
-	if _n in BETAM:
-		_nuclide.lambda_betam = LN2/BETAM[_n]
-	if _n in BETAP:
-		_nuclide.lambda_betap = LN2/BETAP[_n]
-	if _n in GAMMA:
-		_nuclide.lambda_gamma = LN2/GAMMA[_n]
-	if _nuclide.sigma_f and not _nuclide.nu:
-		_nuclide.nu = NU
+for nuclide in ALL_NUCLIDES:
+	n = nuclide.name
+	if n in ALPHA:
+		nuclide.lambda_alpha = LN2/ALPHA[n]
+	if n in BETAM:
+		nuclide.lambda_betam = LN2/BETAM[n]
+	if n in BETAP:
+		nuclide.lambda_betap = LN2/BETAP[n]
+	if n in GAMMA:
+		nuclide.lambda_gamma = LN2/GAMMA[n]
+	if nuclide.sigma_f and not nuclide.nu:
+		nuclide.nu = thermal.nu
+
+# Finally, populate it.
+thermal.nuclides = ALL_NUCLIDES

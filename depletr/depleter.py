@@ -40,9 +40,8 @@ class Depleter:
 	enrichment
 	max_burnup
 	mass
-	data: module
-		Python module with all the stuff defined
-		# TODO: Replace this with a class
+	data: nuclides.Nuclib
+		Libary (either "fast" or "thermal") with nuclides defined
 	"""
 	def __init__(self, power, enrichment, max_burnup, spectrum,
 		         mass=1E8, fuel_type="U"):
@@ -60,12 +59,12 @@ class Depleter:
 	
 	def get_all_nuclides(self):
 		"""Get the list of all Nuclides in the system"""
-		return self.data.ALL_NUCLIDES
+		return self.data.nuclides.values()
 	
 	
 	def get_all_nuclide_names(self):
 		"""Get the list of all nuclide names in the system"""
-		return [n.name for n in self.data.ALL_NUCLIDES]
+		return [n.name for n in self.get_all_nuclides()]
 	
 	
 	def scale(self, quantities):
@@ -194,13 +193,13 @@ class Depleter:
 		"""
 		power_megawatt = self.power*self.mass*1E-6
 		fission_rate = fuel.get_fission_rate(power_megawatt)
-		quantities = fuel.give_me_fuel(self.fuel_type, self.enrichment,
-		                               len(self.data.ALL_NUCLIDES))
+		all_nuclides = self.get_all_nuclides()
+		quantities = fuel.give_me_fuel(self.fuel_type, self.enrichment, len(all_nuclides))
 		time = fuel.give_me_fire(self.power, self.max_burnup)
 		dt = time/nsteps
 		
 		ds = DataSet()
-		ds.add_nuclides(self.data.ALL_NUCLIDES, quantities)
+		ds.add_nuclides(all_nuclides, quantities)
 		ds.build()
 		c0 = self.scale(ds.get_initial_quantities())
 		
