@@ -268,7 +268,6 @@ class Depleter:
 		quantities: np.ndarray(dtype=float, len=NUM_NUCLIDES)
 			Vector of nuclide quantities in the spent fuel,
 			excluding lumped fission products and deadend actinides.
-			# TODO: Confirm whether this actually does exclude lumped variables
 		
 		which_elements: Iterable of str
 			Symbols for the elements to retain after chemical separation.
@@ -302,7 +301,22 @@ class Depleter:
 		return mox  # remember mox_frac is in atom fraction
 	
 	
-	def reload(self, quantities, nsteps, return_kinf=False, verbose=False):
+	def _deplete_reloaded_fuel(self, quantities, nsteps, verbose):
+		"""See `Depleter.reload()`."""
+		if not self._last_dataset:
+			self._last_dataset = DataSet()
+			self._last_dataset.add_nuclides(self.get_all_nuclides(), quantities[:-2])
+			self._last_dataset.build()
+		ds = self._last_dataset
+		power_megawatt = self.power*self.mass*1E-6
+		fission_rate = fuel.get_fission_rate(power_megawatt)
+		time = fuel.give_me_fire(self.power, self.max_burnup)
+		dt = time/nsteps
+		c0 = self.scale(quantities)
+		return self._deplete(nsteps, dt, ds, c0, fission_rate, verbose)
+	
+	
+	def reload(self, quantities, nsteps, verbose=False):
 		"""Reload the core with known nuclides, then deplete to burnup limit
 		
 		When depleting a core that is not pure U235/U238, the nuclide
@@ -323,46 +337,33 @@ class Depleter:
 		nsteps: int
 			Number of time steps to use
 			
-		return_kinf: bool (optional)
-			Whether to return a vector of k-infinity rather than
-			the nuclide concentrations. This exists for running optimization
-			calculations and will be deprecated by May 15, 2020.
-			# FIXME: Separate this into its own function
-			[Default: False]
-		
 		verbose: bool (optional)
 			Whether to print extra information during the depletion solution
 			[Default: False]
 		
 		Returns;
 		--------
-		if return_kinf:
-			np.ndarray(dtype=float, len=nsteps)
-			Vector of k-infinity at every time step
-		else:
-			np.ndarray(dtype=float, len=NUM_NUCLIDES + 2); nuclei * 1E-24
+		np.ndarray(dtype=float, len=NUM_NUCLIDES + 2); nuclei * 1E-24
 			Vector of nuclide concentrations at the end of the depletion (EOC).
 		"""
-		if not self._last_dataset:
-			self._last_dataset = DataSet()
-			self._last_dataset.add_nuclides(self.get_all_nuclides(), quantities[:-2])
-			self._last_dataset.build()
-		ds = self._last_dataset
-		
-		power_megawatt = self.power*self.mass*1E-6
-		fission_rate = fuel.get_fission_rate(power_megawatt)
-		time = fuel.give_me_fire(self.power, self.max_burnup)
-		dt = time/nsteps
-		c0 = self.scale(quantities)
-		
-		concs, kinf, flux, enrich = self._deplete(nsteps, dt, ds, c0, fission_rate, verbose)
-		
-		# For optimization purposes
-		if return_kinf:
-			return kinf
-		
+		concs, _, _, _ = self._deplete_reloaded_fuel(quantities, nsteps, verbose)
 		return concs[:, -1]
-			
+	
+	
+	def reload_kinf(self, quantities, nsteps):
+		"""`Depleter.reload()`, but returns k-infinities instead
+		
+		This function exists for optimization calculations.
+		
+		Returns;
+		--------
+		np.ndarray(dtype=float, len=nsteps)
+			Vector of k-infinity at every time step
+		"""
+		# For optimization purposes
+		_, kinf, _, _ = self._deplete_reloaded_fuel(quantities, nsteps, verbose=False)
+		return kinf
+		
 	
 	def decay(self, quantities, nsteps, times):
 		"""Let nuclides decay for a certain amount of time
@@ -371,7 +372,7 @@ class Depleter:
 		absent of any neutron flux.
 		
 		This method lazily uses an equal number of steps (`nsteps`) for every
-		interval in `times`. It was sufficient for the 22.215 problem set,
+		interval in `times`. It was sufficient for the 22.251 problem set,
 		but should allow options to use an array of `nsteps` per interval,
 		a fixed `dt`, or an array of `dt` per interval.
 		

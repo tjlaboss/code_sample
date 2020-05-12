@@ -29,7 +29,7 @@ cout = study.reload(cin, NSTEPS)
 def optimize_mox_mix(n):
 	global cout
 	cin = study.reprocess(cout, which_elements=ELEMENTS, mox_frac=n)
-	kinf3 = study.reload(cin, NSTEPS, return_kinf=True)
+	kinf3 = study.reload_kinf(cin, NSTEPS)
 	print(n)
 	return kinf3.mean()
 
