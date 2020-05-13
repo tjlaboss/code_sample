@@ -6,8 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.constants import N_A
 from scipy.linalg import expm as matrexp
-from . import fuel, nuclides
-from . import plotter
+from . import fuel, nuclides, plotter
 from .dataset import DataSet
 
 
@@ -37,15 +36,17 @@ class Depleter:
 	enrichment
 	max_burnup
 	mass
+	fuel_type: str
+		Hardcoded as "Uranium". Hope to implement other fresh fuels.
 	data: nuclides.Nuclib
 		Libary (either "fast" or "thermal") with nuclides defined
 	"""
-	def __init__(self, power, enrichment, max_burnup, spectrum, mass=1E8, fuel_type="U"):
+	def __init__(self, power, enrichment, max_burnup, spectrum, mass=1E8):
 		self.power = power
 		self.enrichment = enrichment / 100
 		self.max_burnup = max_burnup
 		self.mass = mass
-		self.fuel_type = fuel_type
+		self.fuel_type = "Uranium"
 		try:
 			get_data = nuclides.SPECTRA[spectrum]
 		except KeyError:
