@@ -1,10 +1,12 @@
-# Elements
-#
-# Convert between atomic number Z and element symbol
+"""
+Elements
+
+Convert between atomic number Z and element symbol
+"""
 
 from collections import OrderedDict
 
-
+#: List of elements indexed by Z.
 SYMBOL = [None]*119
 SYMBOL[0] = 'n'  # <neutron>
 SYMBOL[1] = 'H'  # Hydrogen
@@ -126,7 +128,7 @@ SYMBOL[116] = 'Lv'  # Livermorium
 SYMBOL[117] = 'Ts'  # Go Vols
 SYMBOL[118] = 'Og'  # Oganesson
 
-
+#: OrderedDict of :code:`{"Atomic symbol" : Z}`
 Z = OrderedDict()
 for zed, sym in enumerate(SYMBOL):
 	Z[sym] = zed
