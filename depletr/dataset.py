@@ -16,16 +16,21 @@ class DataSet:
 	
 	Attributes:
 	-----------
-	size: int
+	:vartype size: int
+	:ivar size:
 		Size of any axis of the DataSet's 'M' and 'L' arrays.
 		This is equal to the number of nuclides in the system plus two
 		(one for lumped actinides and one for lumped fission products).
 	
-	m: np.ndarray, float (barns)
-		'M' matrix of microscopic cross sections. Shape: (size, size)
+	:vartype m: :class:`~numpy:np.ndarray`
+	:ivar m:
+		'M' matrix of microscopic cross sections.
+		Shape=(size, size); dtype=float; units=s^-1.
 	
-	l: np.ndarray, float (s^-1)
-		'L' matrix of decay constants (lambdas). Shape: (size, size)
+	:vartype l: :class:`~numpy:np.ndarray`
+	:ivar l:
+		'L' matrix of decay constants (lambdas).
+		Shape=(size, size); dtype=float; units=s^-1.
 	
 	"""
 	def __init__(self):
@@ -61,11 +66,13 @@ class DataSet:
 		
 		Parameters:
 		-----------
-		nuc: Nuclide
+		:type nuc: Nuclide
+		:param nuc:
 			Nuclide to add to the system. If it is already present,
 			an error will be raised.
-			
-		q: float; optional
+		
+		:type q: float, optional
+		:param q:
 			Quantity of the nuclide to add. Arbitrary units.
 			Specify a quantity of 0 to add the nuclide to the depletion chain.
 			[Default: 0]
@@ -85,10 +92,13 @@ class DataSet:
 		
 		Parameters:
 		-----------
-		list_of_nuclides: Iterable of Nuclide
+		:type list_of_nuclides: Iterable of `Nuclide`
+		:param list_of_nuclides:
 			Nuclides to add to the system. If any are already present,
 			an error will be raised.
-		list_of_quantities: Iterable of float; optional
+		
+		:type list_of_quantities: Iterable of float, optional
+		:param list_of_quantities:
 			Quantities of each nuclide in `list_of_nuclides.`
 			Specify quantities of zero to add nuclides to the depletion chain.
 			[Default: None --> all Nuclides at 0]
@@ -178,7 +188,8 @@ class DataSet:
 		
 		Returns:
 		--------
-		None, or np.ndarray of float
+		:rtype: None, or `np.ndarray` of float
+		:returns:
 			Returns None if the DataSet has not been built.
 			Otherwise, returns a 1D array of the initial quantities.
 		"""
@@ -195,12 +206,14 @@ class DataSet:
 		
 		Parameter:
 		----------
-		rxn: str
+		:type rxn: str
+		:param rxn:
 			Reaction to find. One of: {"fission" | "nu-fission" | "absorption" | "capture"}
 		
 		Returns:
 		--------
-		np.ndarray of float
+		:rtype: np.ndarray of float
+		:return:
 			Array of cross sections of `rxn` for each nuclide.
 		"""
 		vector = np.zeros(self._size)
@@ -227,12 +240,14 @@ class DataSet:
 		
 		Parameter:
 		----------
-		rxn: str
+		:type rxn: str
+		:param rxn:
 			Reaction to find. One of: {"fission" | "nu-fission" | "absorption" | "capture"}
 		
 		Returns:
 		--------
-		np.ndarray of float
+		:rtype: `np.ndarry` of float
+		:return:
 			Array of cross sections of `rxn` for each nuclide.
 		"""
 		self._check_built()
@@ -241,5 +256,12 @@ class DataSet:
 		return self._rxn_vectors[rxn]
 	
 	def get_fission_vector(self):
-		"""Get the vector of all nuclides' fission cross sections"""
+		"""Get the vector of all nuclides' fission cross sections
+		
+		Returns:
+		--------
+		:rtype: np.ndarray of float
+		:return:
+			Array of fission cross sections for each nuclide.
+		"""
 		return self.get_xs_vector("fission")
