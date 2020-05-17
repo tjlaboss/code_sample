@@ -3,7 +3,16 @@
 
 from assert_test import assert_test as _assert
 import sys; sys.path.append('..')
-from depletr.nuclides.thermal import np238, pu238, pu242, am241, am242, am242m
+import depletr
+
+# Collect the nuclides we need
+thermal = depletr.nuclides.SPECTRA["thermal"]()
+np238 = thermal.np238
+pu238 = thermal.pu238
+pu242 = thermal.pu242
+am241 = thermal.am241
+am242 = thermal.am242
+am242m = thermal.am242m
 
 
 def test_neutron_capture():
