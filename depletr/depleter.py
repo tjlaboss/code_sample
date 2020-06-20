@@ -1,6 +1,8 @@
-# Depleter
-#
-# Class to deplete nuclides
+"""
+Depleter
+
+Module containing the `Depleter` class. It depletes nuclides.
+"""
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,30 +17,34 @@ class Depleter:
 
 	Parameters:
 	-----------
-	power: float; W/g
-		Core power density
+	:type power: float
+	:param power:
+		Core power density in W/g
 		
-	enrichment: float; wt%
+	:type enrichment: float
+	:param enrichment:
 		Initial U235 enrichment
 	
-	max_burnup: float; MW-d/kg-HM
-		Burnup limit to deplete to (i.e., EOC).
+	:type max_burnup: float
+	:param max_burnup:
+		Burnup limit to deplete to (i.e., EOC) in MW-d/kg-HM
 	
-	spectrum: str
+	:type spectrum: str
+	:param spectrum:
 		"fast" or "thermal"
 	
-	mass: float; kg
-		Heavy metal mass in the core at BOC
+	:type mass: float
+	:param mass:
+		Heavy metal mass (kg) in the core at BOC
 	
 	Attributes:
 	-----------
-	power
-	enrichment
-	max_burnup
-	mass
-	fuel_type: str
+	:vartype fuel_type: str
+	:ivar fuel_type:
 		Hardcoded as "Uranium". Hope to implement other fresh fuels.
-	data: nuclides.Nuclib
+		
+	:vartype data: nuclides.Nuclib
+	:ivar data:
 		Libary (either "fast" or "thermal") with nuclides defined
 	"""
 	def __init__(self, power, enrichment, max_burnup, spectrum, mass=1E8):
@@ -59,12 +65,24 @@ class Depleter:
 	
 	
 	def get_all_nuclides(self):
-		"""Get the list of all Nuclides in the system"""
+		"""Get all Nuclides in the system
+		
+		Returns:
+		--------
+		:rtype: dict_values of :class:`~nuclides.Nuclide`
+		:return: All instances of Nuclide in the system
+		"""
 		return self.data.nuclides.values()
 	
 	
 	def get_all_nuclide_names(self):
-		"""Get the list of all nuclide names in the system"""
+		"""Get the all nuclide names in the system
+		
+		Returns:
+		--------
+		:rtype: list of str
+		:return: Names of all the Nuclide instances in the system
+		"""
 		return [n.name for n in self.get_all_nuclides()]
 	
 	
@@ -81,13 +99,15 @@ class Depleter:
 		
 		Parameter:
 		----------
-		quantities: np.ndarray of float; arbitrary units
+		:type quantities: np.ndarray of float; arbitrary units
+		:param quantities:
 			Vector of quantities of nuclides to scale to the reactor mass.
 			Will be normalized: their units or absolute values do not matter.
 		
 		Returns:
 		--------
-		np.ndarray of float; atoms * 1E-24
+		:rtype: np.ndarray of float; atoms * 1E-24
+		:return:
 			Vector of total number of nuclei
 		"""
 		return self._scalar*quantities/quantities.sum()
@@ -101,17 +121,29 @@ class Depleter:
 		
 		Parameters:
 		-----------
-		nsteps: int
+		:type nsteps: int
+		:param nsteps:
 			Number of time steps to take per interval
-		dt: float; seconds
-			Time step size
-		ds: depletr.DataSet
+		
+		:type dt: float
+		:param dt:
+			Time step size, in seconds
+		
+		:type ds: depletr.DataSet
+		:param ds:
 			Data set to use for this depletion solution
-		c0: np.ndarray, float, len=(ds.size); nuclei * 1E-24
-			Vector of absolute nuclide abundances at time zero
-		fission_rate: float; fissions/second
-			Fission rate to maintain at each solved time
-		verbose: bool
+		
+		:type c0: np.ndarray, float, len=(ds.size)
+		:param c0:
+			Vector of absolute nuclide abundances at time zero.
+			Scaled by factor of 1E-24.
+		
+		:type fission_rate: float
+		:param fission_rate:
+			Fission rate (fissions/second) to maintain at each solved time
+		
+		:type verbose: bool
+		:param verbose
 			If True, prints extra information
 		
 		Returns:
@@ -119,10 +151,13 @@ class Depleter:
 		concentrations: np.ndarray(dtype=float, shape=(ds.size, nsteps));
 		                nuclei * 1E-24
 			Nuclide concentrations at each time step.
+		
 		kinfvals: np.ndarray(dtype=float, len=nsteps)
 			Vector of k-infinity at each time step.
+		
 		fluxvals: np.ndarray(dtype=float, len=nsteps); neutrons/cm^2/s
 			Neutron flux at each time step.
+		
 		enrichvals: np.ndarray(dtype=float, len=nsteps)
 			Enrichment (in atom fraction) of U235/(U235 + U238).
 		"""
@@ -173,9 +208,12 @@ class Depleter:
 		
 		Parameters:
 		-----------
-		nsteps: int
+		:type nsteps: int
+		:param nsteps:
 			Number of time steps to use
-		plots: {int | bool} (optional)
+		
+		:type plots: {int | bool}, optional
+		:param plots:
 			Plotting mode:
 			 -  0: (or anything Falsey) Do not make any plots
 			 -  1: (or True) Make a single plot with 4 depletion subplots
@@ -183,13 +221,16 @@ class Depleter:
 			       initial heavy metal depletion plot.
 		     - >2: Make 4 subplots
 		    [Default: 1]
-		verbose: bool (optional)
+		
+		:type verbose: bool (optional)
+		:param verbose:
 			Whether to print extra information during depletion.
 			[Default: True]
 		
 		Returns:
 		--------
-		np.ndarray, float; nuclides * 1E-24
+		:rtype: np.ndarray, float; nuclides * 1E-24
+		:returns:
 			Nuclide concentrations at the end of the depletion (EOC).
 		"""
 		power_megawatt = self.power*self.mass*1E-6
@@ -265,22 +306,27 @@ class Depleter:
 		
 		Parameters:
 		-----------
-		quantities: np.ndarray(dtype=float, len=NUM_NUCLIDES)
+		:type quantities: np.ndarray(dtype=float, len=NUM_NUCLIDES)
+		:param quantities:
 			Vector of nuclide quantities in the spent fuel,
 			excluding lumped fission products and deadend actinides.
 		
-		which_elements: Iterable of str
+		:type which_elements: Iterable of str
+		:param which_elements:
 			Symbols for the elements to retain after chemical separation.
-			For example, which_elements=("Pu", "Np") will retain all nuclides
+			For example, `which_elements=("Pu", "Np")` will retain all nuclides
 			of the elements Plutonium and Neptunium.
 		
-		mox_frac: float
+		:type mox_frac: float
+		:param mox_frac:
 			Atom fraction of the retained elements to mix into the new fuel.
 		
 		Returns:
 		--------
-		mox: np.ndarray
-		
+		:rtype: np.ndarray
+		:return:
+			Vector of nuclide abundances (*1E-24), including
+			dead end actinides and lumped fission products.
 		"""
 		all_nuclides = self.get_all_nuclides()
 		nuclides_names = self.get_all_nuclide_names()
@@ -329,21 +375,25 @@ class Depleter:
 		
 		Parameters:
 		-----------
-		quantities: np.ndarray(dtype=float, len=NUM_NUCLIDES + 2)
+		:type quantities: np.ndarray(dtype=float, len=NUM_NUCLIDES + 2)
+		:param quantities:
 			Vector of nuclides with which to fill the core.
 			The last two entries are the "dead-end" (lumped) actinide
 			and fission product, respectively.
 			
-		nsteps: int
+		:type nsteps: int
+		:param nsteps:
 			Number of time steps to use
 			
-		verbose: bool (optional)
+		:type verbose: bool (optional)
+		:param verbose:
 			Whether to print extra information during the depletion solution
 			[Default: False]
 		
 		Returns;
 		--------
-		np.ndarray(dtype=float, len=NUM_NUCLIDES + 2); nuclei * 1E-24
+		:rtype: np.ndarray(dtype=float, len=NUM_NUCLIDES + 2); nuclei * 1E-24
+		:return:
 			Vector of nuclide concentrations at the end of the depletion (EOC).
 		"""
 		concs, _, _, _ = self._deplete_reloaded_fuel(quantities, nsteps, verbose)
@@ -357,7 +407,8 @@ class Depleter:
 		
 		Returns;
 		--------
-		np.ndarray(dtype=float, len=nsteps)
+		:rtype: np.ndarray(dtype=float, len=nsteps)
+		:returns:
 			Vector of k-infinity at every time step
 		"""
 		# For optimization purposes
@@ -379,29 +430,33 @@ class Depleter:
 		Example:
 		--------
 		decayed = Depleter.decay(q_spent, 2, [10, 20, 100])
-			--> Will deplete [0 -> 10], [10 -> 20], and [20 -> 100]
-			    with 2 steps: [5,  10,   15,   20,   60,  and  100]
+			Will deplete [0 -> 10], [10 -> 20], and [20 -> 100]
+			with 2 steps: [5,  10,   15,   20,   60,  and  100]
 		
 		The resulting array `decayed` will represent nuclide concentrations
 		at times 0, 10, 20, and 100.
 		
 		Parameters:
 		-----------
-		quantities: Iterable of float, len=(ALL_NUCLIDES + 2);
+		:type quantities: Iterable of float, len=(ALL_NUCLIDES + 2)
+		:param quantities:
 			Quantities of each Nuclide at the start of the decay period.
 			The last two entries are the "dead-end" (lumped) actinide
 			and fission product, respectively.
 		
-		nsteps: int
+		:type nsteps: int
+		:param nsteps:
 			Number of time steps in each interval.
 		
-		times: np.ndarray of float, seconds
+		:type times: np.ndarray of float, seconds
+		:param times:
 			Times to report Nuclide concentrations at.
 			`nsteps` time steps will be taken between each time in the array.
 		
 		Returns:
 		--------
-		np.ndarray of float, shape=(ALL_NUCLIDES + 2, len(times))
+		:rtype: np.ndarray of float, shape=(ALL_NUCLIDES + 2, len(times))
+		:returns:
 			Nuclide concentrations, including lumped actinides and fission products,
 			at time 0 and each time requested in `times`.
 		"""
@@ -432,5 +487,5 @@ class Depleter:
 	
 	
 	def show(self):
-		"""Shortcut for matplotlib.pyplot.show()"""
+		"""Shortcut for `matplotlib.pyplot.show()`  """
 		return plt.show()
