@@ -12,46 +12,14 @@ Subpackages
 Submodules
 ----------
 
-depletr.dataset module
-----------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: depletr.dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-depletr.depleter module
------------------------
-
-.. automodule:: depletr.depleter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-depletr.fuel module
--------------------
-
-.. automodule:: depletr.fuel
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-depletr.plotter module
-----------------------
-
-.. automodule:: depletr.plotter
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-depletr.printer module
-----------------------
-
-.. automodule:: depletr.printer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
+   depletr.dataset
+   depletr.depleter
+   depletr.fuel
+   depletr.plotter
+   depletr.printer
 
 Module contents
 ---------------

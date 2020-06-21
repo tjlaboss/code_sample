@@ -29,6 +29,7 @@ author = 'tjlaboss'
 # ones.
 extensions = [
 	"sphinx.ext.autodoc",
+	"sphinx.ext.apidoc",
 	"sphinx.ext.napoleon",
 	"sphinx.ext.intersphinx",
 ]

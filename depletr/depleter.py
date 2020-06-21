@@ -455,7 +455,7 @@ class Depleter:
 		
 		Returns:
 		--------
-		:rtype: np.ndarray of float, shape=(ALL_NUCLIDES + 2, len(times))
+		:rtype: np.ndarray of float, shape=(ALL_NUCLIDES + 1, len(times))
 		:returns:
 			Nuclide concentrations, including lumped actinides and fission products,
 			at time 0 and each time requested in `times`.

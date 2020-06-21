@@ -1,6 +1,8 @@
-# Fuel
-#
-# Functions related to fuel compositions
+"""
+Fuel
+
+Functions related to fuel compositions
+"""
 
 
 import numpy as np
@@ -8,6 +10,7 @@ from scipy.constants import eV
 from .nuclides.half_lives import DAY
 
 
+#: Elements which have been implemented so far
 ELEMENTS = ("U", "Uranium")  # + ("Pu", "Plutonium")
 
 
@@ -58,7 +61,7 @@ def give_me_fire(watts_per_gram, burnup):
 	:param watts_per_gram:
 		Power density of the reactor
 	
-	:type: burnup: float; MW-d/kg-HM
+	:type burnup: float; MW-d/kg-HM
 	:param burnup:
 		Desired fuel burnup at EOC
 	
