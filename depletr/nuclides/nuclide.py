@@ -1,3 +1,9 @@
+"""
+Nuclide
+
+Module containing just the `Nuclide` class.
+"""
+
 import numpy as np
 from . import elements
 from . import constants
@@ -8,19 +14,32 @@ class Nuclide:
 
 	Parameters:
 	-----------
-	element:        str; atomic symbol for the element, e.g. "U"
-	a:              int; mass number of the nucleus,    e.g. 235
+	:param element:
+		atomic symbol for the element, e.g. "U"
+	:type element: str
+	
+	:param a:
+		mass number of the nucleus,    e.g. 235
+	:type a: int
 
 	Attributes:
 	-----------
-	name:           str;   element+A, e.g., "U235" for Uranium-235
-	alpha:          float; maximum fractional energy loss per collision
-	xi:             float; mean logarithmic energy decrement
-	lambda:         float, s^-1; decay constant
-	halflife:       float, s; decay half-life
-	sigma_n:        float, barns; (n, n) micro xs
-	sigma_y:        float, barns; (n, y) micro xs
-	sigma_f:        float, barns; (n, f) micro xs
+	:ivar name:           element+A, e.g., "U235" for Uranium-235
+	:vartype name:        str
+	:ivar alpha:          maximum fractional energy loss per collision
+	:vartype alpha:       float
+	:ivar xi:             mean logarithmic energy decrement
+	:vartype xi:          float
+	:ivar lambda:         decay constant (s^-1)
+	:vartype lambda:      float
+	:ivar halflife:       decay half-life (seconds)
+	:vartype halflife:    float
+	:ivar sigma_n:        (n, n) micro xs (barns)
+	:vartype sigma_n:     float
+	:ivar sigma_y:        (n, y) micro xs (barns)
+	:vartype sigma_y:     float
+	:ivar sigma_f:        (n, f) micro xs (barns)
+	:vartype sigma_f:     float
 	"""
 	def __init__(self, element, a):
 		element = element.title()
@@ -90,34 +109,79 @@ class Nuclide:
 		self._lambda_total = np.log(2)/t12
 
 	def capture(self):
-		"""Get the daughter nuclides from a neutron capture"""
+		"""Get the daughter nuclides from a neutron capture
+		
+		For nuclei where we model excited but metastable states, there exists
+		a branch ratio for producing the ground state or the metastable state.
+		
+		Returns:
+		--------
+		:return: Names and branch ratios of the daughter nuclide at the ground
+		         and metastable (excited) states, such as:
+		         ((name_g, branch_ratio_g), (name_m, branch_ratio_m))
+		:rtype:  Nested tuples of the structure: ((str, str), (str, str))
+		"""
 		daughter = self.element + str(self.a + 1)
 		state0 = (daughter, 1 - self.metastable_branch_ratio)
 		statem = (daughter + 'm', self.metastable_branch_ratio)
 		return state0, statem
 	
 	def decay_betap(self):
-		"""Get the daughter nuclide from a Beta+ decay"""
+		"""Get the daughter nuclide from a Beta+ decay
+		
+		Returns:
+		--------
+		:return: Name of the daughter nuclide
+		:rtype:  str or Nonetype
+		"""
 		ep = elements.SYMBOL[self.z - 1]
 		return ep + str(self.a)
 	
 	def decay_betam(self):
-		"""Get the daughter nuclide from a Beta- decay"""
+		"""Get the daughter nuclide from a Beta- decay
+		
+		Returns:
+		--------
+		:return: Name of the daughter nuclide
+		:rtype:  str or Nonetype
+		"""
 		em = elements.SYMBOL[self.z + 1]
 		return em + str(self.a)
 	
 	def decay_alpha(self):
-		"""Get the daughter nuclide from an alpha decay"""
+		"""Get the daughter nuclide from an alpha decay
+		
+		Returns:
+		--------
+		:return: Name of the daughter nuclide
+		:rtype:  str or Nonetype
+		"""
 		e = elements.SYMBOL[self.z - 2]
 		a = self.a - 4
 		return e + str(a)
 	
 	def decay_gamma(self):
-		"""Get the daughter nuclide from internal conversion or gamma decay"""
+		"""Get the daughter nuclide from internal conversion or gamma decay
+		
+		Returns:
+		--------
+		:return: Name of the daughter nuclide
+		:rtype:  str or Nonetype
+		"""
 		if self.name[-1] == "m":
 			return self.name[:-1]
 	
 	def fission(self):
+		"""Get the fission product, if fissionable.
+		
+		This returns a list instead of a single string, in case we want
+		to return 2 (or 3) fission products.
+		
+		Returns:
+		--------
+		:return: List containing just the lumped fission product
+		:rtype:  list of str, or Nonetype
+		"""
 		if self.sigma_f:
 			return [constants.FISSION_PRODUCT]
 	
@@ -126,7 +190,8 @@ class Nuclide:
 		
 		Returns:
 		--------
-		daughters:  list of str; daughter nuclides from all possible decays
+		:return:  daughter nuclides from all possible decays
+		:rtype:   list of str
 		"""
 		daughters = []
 		if self.lambda_alpha:

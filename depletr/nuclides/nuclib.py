@@ -1,11 +1,35 @@
-# Nuclib
-#
-# Nuclide libraries
+"""
+Nuclib
+
+Module containing `Nuclib` class
+"""
 
 from collections import OrderedDict
 
 
 class Nuclib:
+	"""Nuclide library
+	
+	Add by doing :code:`Nuclib.nuclides = list_of_nuclides`.
+	The `nuclides` dictionary will be built automatically.
+	
+	Parameters:
+	-----------
+	:param name:
+		Brief name of the lib, such as "thermal"
+	:type name: str
+	
+	:param nu:
+		Average number of neutrons per fission
+	:type nu: float
+	
+	Attributes:
+	-----------
+	:ivar nuclides:
+		Dictionary of :code:`{"nuclide name" : Nuclide}`
+	:vartype nuclides:
+		collections.OrderedDict
+	"""
 	def __init__(self, name, nu):
 		self.name = name
 		self.nu = nu

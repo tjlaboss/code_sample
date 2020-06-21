@@ -1,6 +1,8 @@
-# Half-Lives
-#
-# Source: NNDC.BNL.gov/nudat2
+"""
+Half-Lives
+
+Source: NNDC.BNL.gov/nudat2
+"""
 
 from numpy import log
 
@@ -11,7 +13,7 @@ DAY = 24*HOUR
 YEAR = 365.25*DAY
 MONTH = YEAR / 12
 
-# Alpha decay
+#: Alpha decay dictionary :code:`{"nuclide name" : alpha_hlife_seconds}`
 ALPHA = {
 	# Uranium
 	"U235"  : 703.8E6*YEAR,
@@ -34,7 +36,7 @@ ALPHA = {
 	"Cm245" : 8453*YEAR
 }
 
-# Beta-
+#: Beta- dict :code:`{"nuclide name" : betam_hlife_seconds}`
 BETAM = {
 	# Thorium
 	"Th233" : 22.3*MINUTE,
@@ -57,7 +59,7 @@ BETAM = {
 	"Am242" : 16.02*HOUR/.872,
 }
 
-# Beta+ (and electron capture)
+# Beta+ (and electron capture) dict :code:`{"nuclide name" : betap_hlife_seconds}`
 BETAP = {
 	# Neptunium
 	"Np236" : 22.5*HOUR/.5,
@@ -65,5 +67,5 @@ BETAP = {
 	"Am242" : 16.02*HOUR/.173,
 }
 
-# Gamma (only for Americium metastable)
+#: Gamma (only for Americium metastable) :code:`{"nuclide name" : gamma_hlife_seconds}`
 GAMMA = {"Am242m": 141*YEAR/0.9954}
