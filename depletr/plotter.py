@@ -1,4 +1,8 @@
-# Plotter
+"""
+Plotter
+
+Plotting functions for depletr
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -43,7 +47,57 @@ def _get_plot_function(ax, plot_type):
 
 
 def make_heavy_metal_plot(tvals, num, all_nuclides, ax=None, unit="day",
-                          plot_type="semilogy", deadend_actinides=False, fission_products=False):
+	                      plot_type="semilogy", deadend_actinides=False, fission_products=False):
+	"""Plot the fraction of initial heavy metal over time
+	
+	Parameters:
+	-----------
+	:type tvals: np.ndarray(dtype=float); seconds
+	:param tvals:
+		Time values for the plot x-axis
+	
+	:type num: np.ndarray(dtype=float, shape=[n_nuclides, n_t]); nuclei*1E-24
+	:param num:
+		Number of each nuclide at each time.
+	
+	:type all_nuclides: Iterable of :class:`~nuclides.Nuclide`
+	:param all_nuclides:
+		Vector of Nuclide instances.
+	
+	:type ax: :class:`matplotlib.axes.Axes`; optional
+	:param ax:
+		Existing Axes instance to plot on.
+		If not provided, a new instance will be created.
+		[Default: None]
+	
+	:type unit: str; optional
+	:param unit:
+		Units to use for time.
+		Must be one of: {"second", "minute", "hour", "day", "month", "year"}
+		[Default: "day"]
+	
+	:type plot_type: str; optional
+	:param plot_type:
+		Plotting function to use.
+		Must be one of: {"semilogx", "semilogy", "loglog", "plot"}
+		[Default: "semilogy"]
+	
+	:type deadend_actinides: bool
+	:param deadend_actinides:
+		Whether to include the dead-end actinides on the plot.
+		[Default: False]
+	
+	:type fission_products: bool
+	:param fission_products:
+		Whether to include the lumped fission products on the plot.
+		[Default: False]
+	
+	Returns:
+	--------
+	:rtype: :class:`matplotlib.axes.Axes`
+	:return:
+		Axes which have been plotted on
+	"""
 	ax = _get_axis(ax)
 	tvals, tstr = _get_t_in_unit(tvals, unit)
 	plot_f = _get_plot_function(ax, plot_type)
@@ -69,7 +123,57 @@ def make_heavy_metal_plot(tvals, num, all_nuclides, ax=None, unit="day",
 
 
 def make_actinides_plot(tvals, num, all_nuclides, ax=None, unit="day",
-                        plot_type="semilogy", deadend_actinides=False, fission_products=False):
+	                    plot_type="semilogy", deadend_actinides=False, fission_products=False):
+	"""Plot each actinide's concentration over time
+
+	Parameters:
+	-----------
+	:type tvals: np.ndarray(dtype=float); seconds
+	:param tvals:
+		Time values for the plot x-axis
+
+	:type num: np.ndarray(dtype=float, shape=[n_nuclides, n_t]); nuclei*1E-24
+	:param num:
+		Number of each nuclide at each time.
+
+	:type all_nuclides: Iterable of :class:`~nuclides.Nuclide`
+	:param all_nuclides:
+		Vector of Nuclide instances.
+
+	:type ax: :class:`matplotlib.axes.Axes`; optional
+	:param ax:
+		Existing Axes instance to plot on.
+		If not provided, a new instance will be created.
+		[Default: None]
+
+	:type unit: str; optional
+	:param unit:
+		Units to use for time.
+		Must be one of: {"second", "minute", "hour", "day", "month", "year"}
+		[Default: "day"]
+
+	:type plot_type: str; optional
+	:param plot_type:
+		Plotting function to use.
+		Must be one of: {"semilogx", "semilogy", "loglog", "plot"}
+		[Default: "plot"]
+
+	:type deadend_actinides: bool
+	:param deadend_actinides:
+		Whether to include the dead-end actinides on the plot.
+		[Default: False]
+
+	:type fission_products: bool
+	:param fission_products:
+		Whether to include the lumped fission products on the plot.
+		[Default: False]
+
+	Returns:
+	--------
+	:rtype: :class:`matplotlib.axes.Axes`
+	:return:
+		Axes which have been plotted on
+	"""
 	ax = _get_axis(ax)
 	tvals, tstr = _get_t_in_unit(tvals, unit)
 	plot_f = _get_plot_function(ax, plot_type)
@@ -94,6 +198,40 @@ def make_actinides_plot(tvals, num, all_nuclides, ax=None, unit="day",
 
 
 def make_enrichment_flux_plot(tvals, enrichvals, fluxvals, ax=None, unit="day"):
+	"""Plot uranium enrichment and flux over time
+
+	Parameters:
+	-----------
+	:type tvals: np.ndarray(dtype=float); seconds
+	:param tvals:
+		Time values for the plot x-axis
+
+	:type enrichvals: np.ndarray(dtype=float, shape=[n_t])
+	:param enrichvals:
+		Enrichment (in atom fraction) of U235/(U235 + U238) at each time
+
+	:type fluxvals: np.ndarray(dtype=float, shape=[n_t]); n/cm^2/s
+	:param fluxvals:
+		Neutron flux at each time
+
+	:type ax: :class:`matplotlib.axes.Axes`; optional
+	:param ax:
+		Existing Axes instance to plot on.
+		If not provided, a new instance will be created.
+		[Default: None]
+
+	:type unit: str; optional
+	:param unit:
+		Units to use for time.
+		Must be one of: {"second", "minute", "hour", "day", "month", "year"}
+		[Default: "day"]
+
+	Returns:
+	--------
+	:rtype: :class:`matplotlib.axes.Axes`
+	:return:
+		Axes which have been plotted on
+	"""
 	ax = _get_axis(ax)
 	tvals, tstr = _get_t_in_unit(tvals, unit)
 	# Enrichment
@@ -128,7 +266,52 @@ def make_enrichment_flux_plot(tvals, enrichvals, fluxvals, ax=None, unit="day"):
 
 
 def make_element_depletion_plot(tvals, list_of_arrays, list_of_nuclides, ax=None, unit="day",
-                                relative=True, element=None):
+	                            relative=True, element=None):
+	"""Plot relative elemental concentration over time
+
+	Parameters:
+	-----------
+	:type tvals: np.ndarray(dtype=float); seconds
+	:param tvals:
+		Time values for the plot x-axis
+
+	:type list_of_arrays: Iterable of np.ndarray(dtype=float, shape=[n_t])
+	:param list_of_arrays:
+		Arrays of each desired Nuclide's abundance over time.
+
+	:type list_of_nuclides: Iterable of :class:`~nuclides.Nuclide`
+	:param list_of_nuclides:
+		List of each desired Nuclide instance.
+
+	:type ax: :class:`matplotlib.axes.Axes`; optional
+	:param ax:
+		Existing Axes instance to plot on.
+		If not provided, a new instance will be created.
+		[Default: None]
+
+	:type unit: str; optional
+	:param unit:
+		Units to use for time.
+		Must be one of: {"second", "minute", "hour", "day", "month", "year"}
+		[Default: "day"]
+	
+	:type relative: bool; optional
+	:param relative:
+		Whether to plot concentration(t) relative to initial concentration.
+		If False, will plot absolute concentration.
+		[Default: True]
+	
+	:type element: str; optional
+	:param element:
+		Which element you are plotting. Will appear in plot title.
+		[Default: :attr:`Nuclide.element` for first :class:`Nuclide` in `list_of_nuclides`]
+
+	Returns:
+	--------
+	:rtype: :class:`matplotlib.axes.Axes`
+	:return:
+		Axes which have been plotted on
+	"""
 	ax = _get_axis(ax)
 	tvals, tstr = _get_t_in_unit(tvals, unit)
 	if len(list_of_arrays) != len(list_of_nuclides):
@@ -156,6 +339,36 @@ def make_element_depletion_plot(tvals, list_of_arrays, list_of_nuclides, ax=None
 
 
 def make_kinf_plot(tvals, kvals, ax=None, unit="day"):
+	"""Plot k-infinity over time
+
+	Parameters:
+	-----------
+	:type tvals: np.ndarray(dtype=float); seconds
+	:param tvals:
+		Time values for the plot x-axis
+
+	:type kvals: np.ndarray(dtype=float)
+	:param kvals:
+		K-infinity values for the plot y-axis
+
+	:type ax: :class:`matplotlib.axes.Axes`; optional
+	:param ax:
+		Existing Axes instance to plot on.
+		If not provided, a new instance will be created.
+		[Default: None]
+
+	:type unit: str; optional
+	:param unit:
+		Units to use for time.
+		Must be one of: {"second", "minute", "hour", "day", "month", "year"}
+		[Default: "day"]
+
+	Returns:
+	--------
+	:rtype: :class:`matplotlib.axes.Axes`
+	:return:
+		Axes which have been plotted on
+	"""
 	ax = _get_axis(ax)
 	tvals, tstr = _get_t_in_unit(tvals, unit)
 	ax.plot(tvals, kvals, 'ro', label="$k_\infty$")
